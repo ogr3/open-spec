@@ -3,12 +3,14 @@ package com.openspec.usernameservice.reservation;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Assumptions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
 import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.utility.DockerClientFactory;
 
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -23,6 +25,7 @@ class ReservationServiceIntegrationTest {
 
     @DynamicPropertySource
     static void overrideProps(DynamicPropertyRegistry registry) {
+        Assumptions.assumeTrue(isDockerAvailable(), "Docker not available for integration test");
         if (postgres == null) {
             postgres = new PostgreSQLContainer<>("postgres:16")
                     .withDatabaseName("usernames")
@@ -34,6 +37,15 @@ class ReservationServiceIntegrationTest {
         registry.add("spring.datasource.username", postgres::getUsername);
         registry.add("spring.datasource.password", postgres::getPassword);
         registry.add("spring.flyway.enabled", () -> true);
+    }
+
+    private static boolean isDockerAvailable() {
+        try {
+            DockerClientFactory.instance().client();
+            return true;
+        } catch (Throwable ignored) {
+            return false;
+        }
     }
 
     @AfterAll

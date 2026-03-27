@@ -32,6 +32,7 @@ jobs:
     needs: verify
     env:
       ENABLE_DOCKER_TESTS: "true"
+      FLYWAY_CLEAN_DISABLED: "false"
       FLYWAY_URL: jdbc:postgresql://localhost:5432/usernames
       FLYWAY_USER: username
       FLYWAY_PASSWORD: secret
