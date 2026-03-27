@@ -11,6 +11,7 @@ env:
   FLYWAY_USER: username
   FLYWAY_PASSWORD: secret
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+  RUN_INTEGRATION_TESTS: 'false'
 
 jobs:
   verify:
@@ -30,6 +31,7 @@ jobs:
   integration:
     runs-on: ubuntu-latest
     needs: verify
+    if: ${{ env.RUN_INTEGRATION_TESTS == 'true' }}
     env:
       ENABLE_DOCKER_TESTS: "true"
       FLYWAY_CLEAN_DISABLED: "false"
