@@ -23,7 +23,8 @@ jobs:
           distribution: 'temurin'
           cache: maven
       - name: Run mvn verify
-        run: ./mvnw -pl username-service -am verify
+        working-directory: username-service
+        run: ./mvnw verify
 
   integration:
     runs-on: ubuntu-latest
@@ -42,7 +43,8 @@ jobs:
           distribution: 'temurin'
           cache: maven
       - name: Run integration suite
-        run: ./mvnw -pl username-service -am verify
+        working-directory: username-service
+        run: ./mvnw verify
 
   docker:
     runs-on: ubuntu-latest
