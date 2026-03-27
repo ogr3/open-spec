@@ -1,0 +1,20 @@
+spring:
+  application:
+    name: username-service
+  datasource:
+    url: jdbc:postgresql://localhost:5432/usernames
+    username: username
+    password: secret
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+server:
+  port: 8080
+
+logging:
+  level:
+    root: INFO
+
+handles:
+  blocklist:
+    location: classpath:blocklist-sv.json
