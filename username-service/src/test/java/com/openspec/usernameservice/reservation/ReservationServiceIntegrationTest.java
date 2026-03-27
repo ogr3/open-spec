@@ -25,21 +25,21 @@ class ReservationServiceIntegrationTest {
 
     @DynamicPropertySource
     static void overrideProps(DynamicPropertyRegistry registry) {
-        if (postgres == null) {
-            try {
+        try {
+            if (postgres == null) {
                 postgres = new PostgreSQLContainer<>(DockerImageName.parse("postgres:16"))
                         .withDatabaseName("usernames")
                         .withUsername("username")
                         .withPassword("secret");
                 postgres.start();
-            } catch (Throwable ex) {
-                Assumptions.assumeTrue(false, "Docker not available: " + ex.getMessage());
             }
+            registry.add("spring.datasource.url", postgres::getJdbcUrl);
+            registry.add("spring.datasource.username", postgres::getUsername);
+            registry.add("spring.datasource.password", postgres::getPassword);
+            registry.add("spring.flyway.enabled", () -> true);
+        } catch (Throwable ex) {
+            Assumptions.assumeTrue(false, "Docker not available: " + ex.getMessage());
         }
-        registry.add("spring.datasource.url", postgres::getJdbcUrl);
-        registry.add("spring.datasource.username", postgres::getUsername);
-        registry.add("spring.datasource.password", postgres::getPassword);
-        registry.add("spring.flyway.enabled", () -> true);
     }
 
     @AfterAll
