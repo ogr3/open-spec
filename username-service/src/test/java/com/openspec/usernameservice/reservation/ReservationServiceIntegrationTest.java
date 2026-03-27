@@ -10,7 +10,7 @@ import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
 import org.testcontainers.containers.PostgreSQLContainer;
-import org.testcontainers.utility.DockerClientFactory;
+import org.testcontainers.DockerClientFactory;
 
 import java.util.Optional;
 import java.util.stream.Stream;
