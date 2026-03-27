@@ -45,6 +45,13 @@ export $(cat .env | xargs)
 
 Spring Boot will connect to the Dockerized PostgreSQL instance via the default properties in `src/main/resources/application.yml`. Override any setting with standard Spring config mechanisms (e.g., env vars like `SPRING_DATASOURCE_URL`).
 
+Profiles:
+- `dev` (default) – local Postgres + bundled blocklist file
+- `staging` – enable with `SPRING_PROFILES_ACTIVE=staging`, reads `STAGING_DB_*` env vars and optional `BLOCKLIST_LOCATION`
+- `prod` – enable with `SPRING_PROFILES_ACTIVE=prod`, reads `PROD_DB_*` env vars and optional `BLOCKLIST_LOCATION`
+
+Health endpoints live at `/actuator/health` and `/actuator/health/readiness` (Spring Boot Actuator is enabled in every profile).
+
 Once the service is running locally you can explore the OpenAPI UI at [http://localhost:8080/swagger-ui](http://localhost:8080/swagger-ui); it renders the static spec served from `/v3/api-docs` (see `src/main/resources/openapi/openapi.json`).
 
 ### Database Schema & Flyway
@@ -56,6 +63,19 @@ Flyway runs automatically on startup, executing migrations in `src/main/resource
 ./mvnw flyway:migrate
 ```
 
+### Docker Image
+
+```bash
+cd username-service
+docker build -t username-service:local .
+docker run --rm -p 8080:8080 \
+  -e SPRING_PROFILES_ACTIVE=prod \
+  -e FLYWAY_URL=jdbc:postgresql://host.docker.internal:5432/usernames \
+  -e FLYWAY_USER=username \
+  -e FLYWAY_PASSWORD=secret \
+  username-service:local
+```
+
 ## Tests
 
 Unit tests run against H2, so no Docker dependency:
@@ -64,6 +84,32 @@ Unit tests run against H2, so no Docker dependency:
 ./mvnw verify
 ```
 
-Integration tests that require PostgreSQL will later leverage Testcontainers once those layers are implemented.
+To run the Postgres Testcontainers suite (`ReservationServiceIntegrationTest`), export `ENABLE_DOCKER_TESTS=true` and ensure Docker Desktop is running:
 
-To run the Postgres Testcontainers suite (`ReservationServiceIntegrationTest`), export `ENABLE_DOCKER_TESTS=true` and ensure Docker Desktop is running. Without that environment variable the integration suite is skipped to keep `./mvnw verify` fast on machines without Docker.
+```bash
+ENABLE_DOCKER_TESTS=true ./mvnw verify
+```
+
+Without that environment variable the integration suite is skipped to keep `./mvnw verify` fast on machines without Docker.
+
+## Blocklist Maintenance CLI
+
+Use the built-in CLI to deduplicate or append entries:
+
+```bash
+# list current entries
+./mvnw -q exec:java -Dexec.mainClass=com.openspec.usernameservice.blocklist.BlocklistTool -- --list
+
+# append a trigram
+./mvnw -q exec:java -Dexec.mainClass=com.openspec.usernameservice.blocklist.BlocklistTool -- --add BOB
+
+# operate on a custom file
+./mvnw -q exec:java -Dexec.mainClass=com.openspec.usernameservice.blocklist.BlocklistTool -- --file /tmp/blocklist.json --add VIP
+```
+
+## Continuous Integration
+
+`.github/workflows/ci.yml` runs on every push and pull request:
+1. `./mvnw verify`
+2. `ENABLE_DOCKER_TESTS=true ./mvnw verify`
+3. Build + push Docker image to `ghcr.io/<owner>/username-service`

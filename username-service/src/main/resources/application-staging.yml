@@ -1,0 +1,12 @@
+spring:
+  config:
+    activate:
+      on-profile: staging
+  datasource:
+    url: ${STAGING_DB_URL:${FLYWAY_URL:jdbc:postgresql://staging-db:5432/usernames}}
+    username: ${STAGING_DB_USER:${FLYWAY_USER:username}}
+    password: ${STAGING_DB_PASSWORD:${FLYWAY_PASSWORD:secret}}
+
+handles:
+  blocklist:
+    location: ${BLOCKLIST_LOCATION:/app/config/blocklist-sv.json}

@@ -23,6 +23,6 @@
 
 ## 5. Ops & Delivery
 
-- [ ] 5.1 Add Dockerfile or Jib config, health endpoints, and Spring profiles for dev/staging/prod with env-driven DB + blocklist overrides.
-- [ ] 5.2 Document blocklist update process and provide Maven exec/CLI script to deduplicate + append entries safely.
-- [ ] 5.3 Wire CI workflow to run `mvn verify`, integration tests, and build/publish the container image.
+- [x] 5.1 Add Dockerfile or Jib config, health endpoints, and Spring profiles for dev/staging/prod with env-driven DB + blocklist overrides.
+- [x] 5.2 Document blocklist update process and provide Maven exec/CLI script to deduplicate + append entries safely.
+- [x] 5.3 Wire CI workflow to run `mvn verify`, integration tests, and build/publish the container image.

@@ -1,0 +1,12 @@
+spring:
+  config:
+    activate:
+      on-profile: prod
+  datasource:
+    url: ${PROD_DB_URL:${FLYWAY_URL:jdbc:postgresql://prod-db:5432/usernames}}
+    username: ${PROD_DB_USER:${FLYWAY_USER:username}}
+    password: ${PROD_DB_PASSWORD:${FLYWAY_PASSWORD:secret}}
+
+handles:
+  blocklist:
+    location: ${BLOCKLIST_LOCATION:/app/config/blocklist-sv.json}

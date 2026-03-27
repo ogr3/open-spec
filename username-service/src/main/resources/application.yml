@@ -1,6 +1,8 @@
 spring:
   application:
     name: username-service
+  profiles:
+    default: dev
   datasource:
     url: ${FLYWAY_URL:jdbc:postgresql://localhost:5432/usernames}
     username: ${FLYWAY_USER:username}
@@ -28,3 +30,14 @@ flyway:
   password: ${FLYWAY_PASSWORD:secret}
   locations:
     - classpath:db/migration
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "health,info"
+  endpoint:
+    health:
+      show-details: never
+      probes:
+        enabled: true
