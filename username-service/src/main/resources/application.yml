@@ -2,9 +2,12 @@ spring:
   application:
     name: username-service
   datasource:
-    url: jdbc:postgresql://localhost:5432/usernames
-    username: username
-    password: secret
+    url: ${FLYWAY_URL:jdbc:postgresql://localhost:5432/usernames}
+    username: ${FLYWAY_USER:username}
+    password: ${FLYWAY_PASSWORD:secret}
+    hikari:
+      connection-test-query: SELECT 1
+      maximum-pool-size: 5
   flyway:
     enabled: true
     locations: classpath:db/migration
@@ -18,3 +21,10 @@ logging:
 handles:
   blocklist:
     location: classpath:blocklist-sv.json
+
+flyway:
+  url: ${FLYWAY_URL:jdbc:postgresql://localhost:5432/usernames}
+  user: ${FLYWAY_USER:username}
+  password: ${FLYWAY_PASSWORD:secret}
+  locations:
+    - classpath:db/migration

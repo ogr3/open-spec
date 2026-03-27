@@ -26,21 +26,33 @@ docker compose -f docker-compose.dev.yml down
 
 The named volume `username-service-pgdata` keeps data between runs. Remove it with `docker volume rm username-service_pgdata` if you need a clean slate.
 
+# Environment Variables
+
+Configure sensitive values via `.env`. Copy `.env.example` to `.env`, update the values, and the Maven build (including `flyway:migrate`) will read them automatically:
+
+```bash
+cp .env.example .env
+```
+
 ## Running the Application
 
 ```bash
 cd username-service
 docker compose -f docker-compose.dev.yml up -d postgres
+export $(cat .env | xargs)
 ./mvnw spring-boot:run
 ```
 
 Spring Boot will connect to the Dockerized PostgreSQL instance via the default properties in `src/main/resources/application.yml`. Override any setting with standard Spring config mechanisms (e.g., env vars like `SPRING_DATASOURCE_URL`).
+
+Once the service is running locally you can explore the OpenAPI UI at [http://localhost:8080/swagger-ui](http://localhost:8080/swagger-ui); it renders the static spec served from `/v3/api-docs` (see `src/main/resources/openapi/openapi.json`).
 
 ### Database Schema & Flyway
 
 Flyway runs automatically on startup, executing migrations in `src/main/resources/db/migration`. The initial script `V1__create_handles.sql` creates the `handles` table (`handle`, `email`, `created_at`). Run migrations manually when needed:
 
 ```bash
+# ensure Postgres is running and env vars exported
 ./mvnw flyway:migrate
 ```
 

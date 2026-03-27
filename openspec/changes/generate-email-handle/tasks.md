@@ -17,9 +17,9 @@
 
 ## 4. REST API Surface
 
-- [ ] 4.1 Build `POST /usernames` controller with request model validation and OpenAPI annotations.
-- [ ] 4.2 Wire controller to generator/reservation services and centralize error mapping in `@ControllerAdvice` producing `{ code, message, details }` responses.
-- [ ] 4.3 Add MockMvc/WebTestClient tests for happy path, invalid email (400), blocklist exhaustion (422), collision exhaustion (409), and storage outage (503).
+- [x] 4.1 Build `POST /usernames` controller with request model validation and OpenAPI annotations.
+- [x] 4.2 Wire controller to generator/reservation services and centralize error mapping in `@ControllerAdvice` producing `{ code, message, details }` responses.
+- [x] 4.3 Add MockMvc/WebTestClient tests for happy path, invalid email (400), blocklist exhaustion (422), collision exhaustion (409), and storage outage (503).
 
 ## 5. Ops & Delivery
 

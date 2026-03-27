@@ -38,6 +38,10 @@ public class ReservationService {
         return repository.findByEmail(email);
     }
 
+    public boolean reserve(String handle, String email) {
+        return tryReserve(handle, email);
+    }
+
     private boolean tryReserve(String handle, String email) {
         try {
             repository.save(HandleReservation.newReservation(handle, email));

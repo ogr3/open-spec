@@ -7,6 +7,7 @@ target/
 .project
 .classpath
 .settings/
+.env
 
 # OS
 .DS_Store

@@ -20,6 +20,13 @@ class HandleGenerationServiceTest {
     }
 
     @Test
+    void dotStrategyUsesFirstSegmentInitial() {
+        List<String> candidates = service.generateCandidates("user.name@example.com").limit(1).collect(Collectors.toList());
+
+        assertThat(candidates).containsExactly("UNA");
+    }
+
+    @Test
     void fallsBackToFirstLettersWhenNoDot() {
         List<String> candidates = service.generateCandidates("emil@example.se").limit(1).collect(Collectors.toList());
 
@@ -30,7 +37,7 @@ class HandleGenerationServiceTest {
     void skipsNonLettersAndUppercases() {
         List<String> candidates = service.generateCandidates("bo.b-å@example.se").limit(1).collect(Collectors.toList());
 
-        assertThat(candidates).containsExactly("OBÅ");
+        assertThat(candidates).containsExactly("BBÅ");
     }
 
     @Test

@@ -16,7 +16,7 @@ The system SHALL uppercase all candidate characters to enforce consistent handle
 
 #### Scenario: Non-letter is skipped and handle uppercased
 - **WHEN** the mailbox is `bo.b-å@example.se`
-- **THEN** the resulting handle SHALL be `OBÅ` (letters only, uppercase) with no punctuation.
+- **THEN** the resulting handle SHALL be `BBÅ` (letters only, uppercase) with no punctuation.
 
 #### Scenario: Padding occurs when too short
 - **WHEN** the mailbox is `q@example.se`

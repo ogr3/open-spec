@@ -81,23 +81,18 @@ public class HandleGenerationService {
             return Optional.empty();
         }
 
-        LetterPosition beforeDot = null;
-        for (LetterPosition lp : letters) {
-            if (lp.index() < dotIndex) {
-                beforeDot = lp;
-            } else {
-                break;
-            }
-        }
+        Optional<LetterPosition> beforeDot = letters.stream()
+                .filter(lp -> lp.index() < dotIndex)
+                .findFirst();
 
-        if (beforeDot == null) {
+        if (beforeDot.isEmpty()) {
             return Optional.empty();
         }
 
         List<Character> result = new ArrayList<>();
         List<Integer> usedIndexes = new ArrayList<>();
-        result.add(beforeDot.letter());
-        usedIndexes.add(beforeDot.index());
+        result.add(beforeDot.get().letter());
+        usedIndexes.add(beforeDot.get().index());
 
         for (LetterPosition lp : letters) {
             if (lp.index() > dotIndex && !usedIndexes.contains(lp.index())) {

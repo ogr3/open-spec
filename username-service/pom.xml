@@ -20,6 +20,10 @@
     <properties>
         <java.version>25</java.version>
         <testcontainers.version>1.20.2</testcontainers.version>
+        <flyway.version>11.14.1</flyway.version>
+        <FLYWAY_URL>jdbc:postgresql://localhost:5432/usernames</FLYWAY_URL>
+        <FLYWAY_USER>username</FLYWAY_USER>
+        <FLYWAY_PASSWORD>secret</FLYWAY_PASSWORD>
     </properties>
 
     <dependencies>
@@ -82,8 +86,48 @@
     <build>
         <plugins>
             <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>properties-maven-plugin</artifactId>
+                <version>1.0.0</version>
+                <executions>
+                    <execution>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>read-project-properties</goal>
+                        </goals>
+                        <configuration>
+                            <files>
+                                <file>.env</file>
+                            </files>
+                            <quiet>true</quiet>
+                            <skipMissingFiles>true</skipMissingFiles>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.flywaydb</groupId>
+                <artifactId>flyway-maven-plugin</artifactId>
+                <version>${flyway.version}</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.flywaydb</groupId>
+                        <artifactId>flyway-database-postgresql</artifactId>
+                        <version>${flyway.version}</version>
+                    </dependency>
+                </dependencies>
+                <configuration>
+                    <url>${FLYWAY_URL}</url>
+                    <user>${FLYWAY_USER}</user>
+                    <password>${FLYWAY_PASSWORD}</password>
+                    <locations>
+                        <location>classpath:db/migration</location>
+                    </locations>
+                </configuration>
             </plugin>
         </plugins>
     </build>
