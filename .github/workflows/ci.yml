@@ -10,6 +10,7 @@ env:
   FLYWAY_URL: jdbc:postgresql://localhost:5432/usernames
   FLYWAY_USER: username
   FLYWAY_PASSWORD: secret
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
   verify:
