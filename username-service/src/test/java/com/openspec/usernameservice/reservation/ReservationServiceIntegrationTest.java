@@ -2,6 +2,7 @@ package com.openspec.usernameservice.reservation;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assumptions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,23 +23,30 @@ import static org.assertj.core.api.Assertions.assertThat;
 class ReservationServiceIntegrationTest {
 
     static PostgreSQLContainer<?> postgres;
+    static Throwable containerStartupError;
 
     @DynamicPropertySource
     static void overrideProps(DynamicPropertyRegistry registry) {
-        try {
-            if (postgres == null) {
+        Assumptions.assumeTrue(containerStartupError == null, containerStartupError == null ? "" : containerStartupError.getMessage());
+        Assumptions.assumeTrue(postgres != null, "Testcontainer did not start");
+        registry.add("spring.datasource.url", postgres::getJdbcUrl);
+        registry.add("spring.datasource.username", postgres::getUsername);
+        registry.add("spring.datasource.password", postgres::getPassword);
+        registry.add("spring.flyway.enabled", () -> true);
+    }
+
+    @BeforeAll
+    static void startContainer() {
+        if (postgres == null && containerStartupError == null) {
+            try {
                 postgres = new PostgreSQLContainer<>(DockerImageName.parse("postgres:16"))
                         .withDatabaseName("usernames")
                         .withUsername("username")
                         .withPassword("secret");
                 postgres.start();
+            } catch (Throwable ex) {
+                containerStartupError = ex;
             }
-            registry.add("spring.datasource.url", postgres::getJdbcUrl);
-            registry.add("spring.datasource.username", postgres::getUsername);
-            registry.add("spring.datasource.password", postgres::getPassword);
-            registry.add("spring.flyway.enabled", () -> true);
-        } catch (Throwable ex) {
-            Assumptions.assumeTrue(false, "Docker not available: " + ex.getMessage());
         }
     }
 
