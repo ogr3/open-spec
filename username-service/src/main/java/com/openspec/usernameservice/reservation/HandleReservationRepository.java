@@ -1,8 +1,7 @@
 package com.openspec.usernameservice.reservation;
 
-import org.springframework.data.repository.CrudRepository;
-
 import java.util.Optional;
+import org.springframework.data.repository.CrudRepository;
 
 public interface HandleReservationRepository extends CrudRepository<HandleReservation, String> {
 

@@ -13,9 +13,10 @@ public class HandleAllocationService {
     private final ProfanityFilter profanityFilter;
     private final ReservationService reservationService;
 
-    public HandleAllocationService(HandleGenerationService generationService,
-                                   ProfanityFilter profanityFilter,
-                                   ReservationService reservationService) {
+    public HandleAllocationService(
+            HandleGenerationService generationService,
+            ProfanityFilter profanityFilter,
+            ReservationService reservationService) {
         this.generationService = generationService;
         this.profanityFilter = profanityFilter;
         this.reservationService = reservationService;

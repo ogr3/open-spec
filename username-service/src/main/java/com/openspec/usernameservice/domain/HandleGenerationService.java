@@ -1,7 +1,5 @@
 package com.openspec.usernameservice.domain;
 
-import org.springframework.stereotype.Service;
-
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -11,6 +9,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import org.springframework.stereotype.Service;
 
 @Service
 public class HandleGenerationService {
@@ -33,9 +32,7 @@ public class HandleGenerationService {
 
         Stream<String> suffixes = Stream.empty();
         if (!fallback.isEmpty()) {
-            suffixes = Stream.iterate(1, n -> n + 1)
-                    .limit(MAX_SUFFIX)
-                    .map(i -> fallback + i);
+            suffixes = Stream.iterate(1, n -> n + 1).limit(MAX_SUFFIX).map(i -> fallback + i);
         }
 
         return Stream.concat(trigrams.stream(), suffixes);
@@ -46,7 +43,8 @@ public class HandleGenerationService {
         for (int i = 0; i < mailbox.length(); i++) {
             char raw = mailbox.charAt(i);
             if (Character.isLetter(raw)) {
-                letters.add(new LetterPosition(Character.toString(raw).toUpperCase(Locale.ROOT).charAt(0), i));
+                letters.add(new LetterPosition(
+                        Character.toString(raw).toUpperCase(Locale.ROOT).charAt(0), i));
             }
         }
         return letters;
@@ -58,14 +56,14 @@ public class HandleGenerationService {
 
         if (letters.size() >= HANDLE_LENGTH) {
             for (int i = 0; i <= letters.size() - HANDLE_LENGTH; i++) {
-                String trigram = letters.subList(i, i + HANDLE_LENGTH)
-                        .stream()
+                String trigram = letters.subList(i, i + HANDLE_LENGTH).stream()
                         .map(lp -> String.valueOf(lp.letter()))
                         .collect(Collectors.joining());
                 ordered.add(trigram);
             }
         } else if (!letters.isEmpty()) {
-            ordered.add(generatePaddedTrigram(letters.stream().map(LetterPosition::letter).toList()));
+            ordered.add(generatePaddedTrigram(
+                    letters.stream().map(LetterPosition::letter).toList()));
         }
 
         if (ordered.isEmpty()) {
@@ -81,9 +79,8 @@ public class HandleGenerationService {
             return Optional.empty();
         }
 
-        Optional<LetterPosition> beforeDot = letters.stream()
-                .filter(lp -> lp.index() < dotIndex)
-                .findFirst();
+        Optional<LetterPosition> beforeDot =
+                letters.stream().filter(lp -> lp.index() < dotIndex).findFirst();
 
         if (beforeDot.isEmpty()) {
             return Optional.empty();
@@ -121,10 +118,8 @@ public class HandleGenerationService {
             result.add('X');
         }
 
-        return Optional.of(result.stream()
-                .limit(HANDLE_LENGTH)
-                .map(String::valueOf)
-                .collect(Collectors.joining()));
+        return Optional.of(
+                result.stream().limit(HANDLE_LENGTH).map(String::valueOf).collect(Collectors.joining()));
     }
 
     private String generatePaddedTrigram(List<Character> source) {
@@ -132,12 +127,8 @@ public class HandleGenerationService {
         while (padded.size() < HANDLE_LENGTH) {
             padded.add('X');
         }
-        return padded.stream()
-                .limit(HANDLE_LENGTH)
-                .map(String::valueOf)
-                .collect(Collectors.joining());
+        return padded.stream().limit(HANDLE_LENGTH).map(String::valueOf).collect(Collectors.joining());
     }
 
-    private record LetterPosition(char letter, int index) {
-    }
+    private record LetterPosition(char letter, int index) {}
 }

@@ -1,10 +1,9 @@
 package com.openspec.usernameservice.blocklist;
 
-import org.springframework.stereotype.Component;
-
 import java.util.Locale;
 import java.util.Optional;
 import java.util.stream.Stream;
+import org.springframework.stereotype.Component;
 
 @Component
 public class ProfanityFilter {
@@ -26,6 +25,8 @@ public class ProfanityFilter {
         if (candidates == null) {
             return Optional.empty();
         }
-        return candidates.filter(candidate -> candidate != null && !isBlocked(candidate)).findFirst();
+        return candidates
+                .filter(candidate -> candidate != null && !isBlocked(candidate))
+                .findFirst();
     }
 }

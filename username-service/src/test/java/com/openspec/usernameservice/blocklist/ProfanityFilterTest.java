@@ -1,13 +1,12 @@
 package com.openspec.usernameservice.blocklist;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.springframework.core.io.DefaultResourceLoader;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Optional;
 import java.util.stream.Stream;
-
-import static org.assertj.core.api.Assertions.assertThat;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.core.io.DefaultResourceLoader;
 
 class ProfanityFilterTest {
 

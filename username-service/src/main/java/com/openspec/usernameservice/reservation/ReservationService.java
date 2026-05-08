@@ -1,12 +1,11 @@
 package com.openspec.usernameservice.reservation;
 
-import org.springframework.dao.DuplicateKeyException;
-import org.springframework.stereotype.Service;
-
 import java.util.Iterator;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Stream;
+import org.springframework.dao.DuplicateKeyException;
+import org.springframework.stereotype.Service;
 
 @Service
 public class ReservationService {

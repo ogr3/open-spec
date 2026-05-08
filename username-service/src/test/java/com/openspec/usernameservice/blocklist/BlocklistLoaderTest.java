@@ -1,10 +1,9 @@
 package com.openspec.usernameservice.blocklist;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import static org.assertj.core.api.Assertions.assertThat;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.core.io.DefaultResourceLoader;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 class BlocklistLoaderTest {
 

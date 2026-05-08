@@ -1,5 +1,12 @@
 package com.openspec.usernameservice.api;
 
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.openspec.usernameservice.service.HandleAllocationService;
 import org.junit.jupiter.api.BeforeEach;
@@ -11,13 +18,6 @@ import org.springframework.dao.DataAccessResourceFailureException;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.reset;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(MockitoExtension.class)
 class HandleControllerTest {
@@ -59,7 +59,8 @@ class HandleControllerTest {
     @Test
     void returns422WhenAllBlocked() throws Exception {
         when(allocationService.allocate(anyString()))
-                .thenThrow(new HandleAllocationService.HandleAllocationException("all_blocked", "Unable", "blocked@example.se"));
+                .thenThrow(new HandleAllocationService.HandleAllocationException(
+                        "all_blocked", "Unable", "blocked@example.se"));
 
         mockMvc.perform(post("/usernames")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -71,7 +72,8 @@ class HandleControllerTest {
     @Test
     void returns409WhenCollisions() throws Exception {
         when(allocationService.allocate(anyString()))
-                .thenThrow(new HandleAllocationService.HandleAllocationException("collisions_exhausted", "Unable", "taken@example.se"));
+                .thenThrow(new HandleAllocationService.HandleAllocationException(
+                        "collisions_exhausted", "Unable", "taken@example.se"));
 
         mockMvc.perform(post("/usernames")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -82,8 +84,7 @@ class HandleControllerTest {
 
     @Test
     void returns503WhenPersistenceFails() throws Exception {
-        when(allocationService.allocate(anyString()))
-                .thenThrow(new DataAccessResourceFailureException("DB down"));
+        when(allocationService.allocate(anyString())).thenThrow(new DataAccessResourceFailureException("DB down"));
 
         mockMvc.perform(post("/usernames")
                         .contentType(MediaType.APPLICATION_JSON)
