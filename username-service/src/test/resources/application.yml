@@ -6,3 +6,7 @@ spring:
     password: sa
   flyway:
     enabled: false
+
+admin:
+  username: admin
+  password: admin

@@ -6,3 +6,7 @@ spring:
 handles:
   blocklist:
     location: classpath:blocklist-sv.json
+
+admin:
+  username: admin
+  password: admin

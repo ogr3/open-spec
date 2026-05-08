@@ -40,4 +40,10 @@ public class GlobalExceptionHandler {
                 .body(new ErrorResponse(
                         "persistence_error", "Unable to persist reservation", List.of(ex.getMessage())));
     }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ErrorResponse> handleIllegalArgument(IllegalArgumentException ex) {
+        return ResponseEntity.badRequest()
+                .body(new ErrorResponse("invalid_request", ex.getMessage(), List.of()));
+    }
 }
