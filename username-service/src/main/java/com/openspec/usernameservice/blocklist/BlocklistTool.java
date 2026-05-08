@@ -21,7 +21,10 @@ public final class BlocklistTool {
         Options options = Options.parse(args);
         Path file = options.file();
         if (!Files.exists(file)) {
-            Files.createDirectories(file.getParent());
+            Path parent = file.getParent();
+            if (parent != null) {
+                Files.createDirectories(parent);
+            }
             Files.writeString(file, "[]\n");
         }
 
@@ -34,7 +37,11 @@ public final class BlocklistTool {
         }
 
         if (!options.additions().isEmpty()) {
-            options.additions().forEach(value -> normalized.add(value.toUpperCase(Locale.ROOT)));
+            options.additions().stream()
+                    .map(String::trim)
+                    .filter(value -> !value.isBlank())
+                    .map(value -> value.toUpperCase(Locale.ROOT))
+                    .forEach(normalized::add);
             System.out.printf("Added %d entries%n", options.additions().size());
         }
 
