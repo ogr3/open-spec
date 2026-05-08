@@ -23,6 +23,10 @@ public class HandleAllocationService {
     }
 
     public HandleResponse allocate(String email) {
+        if (reservationService.findByEmail(email).isPresent()) {
+            throw new HandleAllocationException("email_already_reserved", "Email already has a reserved handle", email);
+        }
+
         boolean sawAllowed = false;
         var iterator = generationService.generateCandidates(email).iterator();
 

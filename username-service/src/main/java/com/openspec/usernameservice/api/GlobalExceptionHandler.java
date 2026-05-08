@@ -27,6 +27,7 @@ public class GlobalExceptionHandler {
         HttpStatus status =
                 switch (ex.getCode()) {
                     case "all_blocked" -> HttpStatus.UNPROCESSABLE_ENTITY;
+                    case "email_already_reserved" -> HttpStatus.CONFLICT;
                     case "collisions_exhausted" -> HttpStatus.CONFLICT;
                     default -> HttpStatus.INTERNAL_SERVER_ERROR;
                 };

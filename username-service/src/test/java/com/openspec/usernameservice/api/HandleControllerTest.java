@@ -83,6 +83,19 @@ class HandleControllerTest {
     }
 
     @Test
+    void returns409WhenEmailAlreadyReserved() throws Exception {
+        when(allocationService.allocate(anyString()))
+                .thenThrow(new HandleAllocationService.HandleAllocationException(
+                        "email_already_reserved", "Email already has a reserved handle", "taken@example.se"));
+
+        mockMvc.perform(post("/usernames")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(new HandleRequest("taken@example.se"))))
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.code").value("email_already_reserved"));
+    }
+
+    @Test
     void returns503WhenPersistenceFails() throws Exception {
         when(allocationService.allocate(anyString())).thenThrow(new DataAccessResourceFailureException("DB down"));
 
