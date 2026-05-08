@@ -9,7 +9,10 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
+import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
@@ -25,15 +28,15 @@ public class BlocklistLoader {
     private Set<String> entries = Collections.emptySet();
 
     public BlocklistLoader(
-            ResourceLoader resourceLoader,
-            @Value("${handles.blocklist.location:classpath:blocklist-sv.json}") String location) {
-        this.resourceLoader = resourceLoader;
-        this.location = location;
+            final @NonNull ResourceLoader resourceLoader,
+            @Value("${handles.blocklist.location:classpath:blocklist-sv.json}") final @NonNull String location) {
+        this.resourceLoader = Objects.requireNonNull(resourceLoader, "resourceLoader must not be null");
+        this.location = Objects.requireNonNull(location, "location must not be null");
     }
 
     @PostConstruct
     public void load() {
-        Resource resource = resourceLoader.getResource(location);
+        final Resource resource = resourceLoader.getResource(location);
         this.entries = Collections.unmodifiableSet(readEntries(resource));
     }
 
@@ -41,17 +44,16 @@ public class BlocklistLoader {
         return entries;
     }
 
-    private Set<String> readEntries(Resource resource) {
+    private Set<String> readEntries(final @NonNull Resource resource) {
+        Objects.requireNonNull(resource, "resource must not be null");
         try (InputStream inputStream = resource.getInputStream()) {
-            List<String> raw = objectMapper.readValue(inputStream, new TypeReference<>() {});
-            Set<String> normalized = new LinkedHashSet<>();
-            for (String entry : raw) {
-                if (entry == null || entry.trim().isEmpty()) {
-                    continue;
-                }
-                normalized.add(entry.trim().toUpperCase(Locale.ROOT));
-            }
-            return normalized;
+            final List<String> raw = objectMapper.readValue(inputStream, new TypeReference<>() {});
+            return raw.stream()
+                    .filter(Objects::nonNull)
+                    .map(String::trim)
+                    .filter(entry -> !entry.isEmpty())
+                    .map(entry -> entry.toUpperCase(Locale.ROOT))
+                    .collect(Collectors.toCollection(LinkedHashSet::new));
         } catch (IOException ex) {
             throw new IllegalStateException("Failed to load blocklist from " + location, ex);
         }

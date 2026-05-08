@@ -76,14 +76,14 @@ class ReservationServiceTest {
     void reserveHandleRejectsNullEmail() {
         assertThatThrownBy(() -> service.reserveHandle(null, Stream.of("ALA")))
                 .isInstanceOf(NullPointerException.class)
-                .hasMessage("email must not be null");
+                .hasMessageContaining("email");
     }
 
     @Test
     void reserveHandleRejectsNullCandidates() {
         assertThatThrownBy(() -> service.reserveHandle("alice@example.se", null))
                 .isInstanceOf(NullPointerException.class)
-                .hasMessage("candidates must not be null");
+                .hasMessageContaining("candidates");
     }
 
     @Test

@@ -2,6 +2,7 @@ package com.openspec.usernameservice.reservation;
 
 import java.time.Instant;
 import java.util.Objects;
+import lombok.NonNull;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.PersistenceCreator;
 import org.springframework.data.annotation.Transient;
@@ -26,18 +27,22 @@ public class HandleReservation implements Persistable<String> {
     private final boolean isNew;
 
     @PersistenceCreator
-    public HandleReservation(String handle, String email, Instant createdAt) {
+    public HandleReservation(final @NonNull String handle, final @NonNull String email, final @NonNull Instant createdAt) {
         this(handle, email, createdAt, false);
     }
 
-    private HandleReservation(String handle, String email, Instant createdAt, boolean isNew) {
-        this.handle = Objects.requireNonNull(handle, "handle");
-        this.email = Objects.requireNonNull(email, "email");
-        this.createdAt = createdAt == null ? Instant.now() : createdAt;
+    private HandleReservation(
+            final @NonNull String handle,
+            final @NonNull String email,
+            final @NonNull Instant createdAt,
+            final boolean isNew) {
+        this.handle = Objects.requireNonNull(handle, "handle must not be null");
+        this.email = Objects.requireNonNull(email, "email must not be null");
+        this.createdAt = Objects.requireNonNull(createdAt, "createdAt must not be null");
         this.isNew = isNew;
     }
 
-    public static HandleReservation newReservation(String handle, String email) {
+    public static HandleReservation newReservation(final @NonNull String handle, final @NonNull String email) {
         return new HandleReservation(handle, email, Instant.now(), true);
     }
 

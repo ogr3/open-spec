@@ -1,9 +1,9 @@
 package com.openspec.usernameservice.reservation;
 
-import java.util.Iterator;
-import java.util.Objects;
 import java.util.Optional;
+import java.util.Objects;
 import java.util.stream.Stream;
+import lombok.NonNull;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
@@ -12,36 +12,31 @@ public class ReservationService {
 
     private final HandleReservationRepository repository;
 
-    public ReservationService(HandleReservationRepository repository) {
+    public ReservationService(final HandleReservationRepository repository) {
         this.repository = repository;
     }
 
-    public Optional<String> reserveHandle(String email, Stream<String> candidates) {
+    public Optional<String> reserveHandle(final @NonNull String email, final @NonNull Stream<String> candidates) {
         Objects.requireNonNull(email, "email must not be null");
         Objects.requireNonNull(candidates, "candidates must not be null");
-
-        Iterator<String> iterator = candidates
+        return candidates
                 .filter(candidate -> candidate != null && !candidate.isBlank())
-                .iterator();
-
-        while (iterator.hasNext()) {
-            String handle = iterator.next();
-            if (tryReserve(handle, email)) {
-                return Optional.of(handle);
-            }
-        }
-        return Optional.empty();
+                .filter(handle -> tryReserve(handle, email))
+                .findFirst();
     }
 
-    public Optional<HandleReservation> findByEmail(String email) {
+    public Optional<HandleReservation> findByEmail(final @NonNull String email) {
+        Objects.requireNonNull(email, "email must not be null");
         return repository.findByEmail(email);
     }
 
-    public boolean reserve(String handle, String email) {
+    public boolean reserve(final @NonNull String handle, final @NonNull String email) {
+        Objects.requireNonNull(handle, "handle must not be null");
+        Objects.requireNonNull(email, "email must not be null");
         return tryReserve(handle, email);
     }
 
-    private boolean tryReserve(String handle, String email) {
+    private boolean tryReserve(final @NonNull String handle, final @NonNull String email) {
         try {
             repository.save(HandleReservation.newReservation(handle, email));
             return true;
